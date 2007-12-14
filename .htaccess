@@ -1,5 +1,5 @@
 RewriteEngine On
-RewriteRule .* index.php
+RewriteRule .* public/index.php
 
 php_flag magic_quotes_gpc ogg
 php_flag register_globals off

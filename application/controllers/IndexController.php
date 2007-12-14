@@ -1,30 +1,31 @@
 <?php
-class IndexController extends Zend_Controller_Action{
+class IndexController extends Album_Controller_Action{
 	
 	public function init(){
+		parent::init();
 		$this->view->baseUrl = $this->_request->getBaseUrl();
 		Zend_Loader::loadClass('Album'); 
 	}
 
 	function indexAction() {
 		$this->view->title = "My Albums";
-	
+
 		$album = new Album();
 		$this->view->albums = $album->fetchAll();
 	}
 
 	function addAction() {
 		$this->view->title = "Add New Album";
-	
+
 		if ($this->_request->isPost()) {
 			Zend_Loader::loadClass('Zend_Filter_StripTags');
 			$filter = new Zend_Filter_StripTags();
-	
+
 			$artist = $filter->filter($this->_request->getPost('artist'));
 			$artist = trim($artist);
 			$title = trim($filter->filter(
 			$this->_request->getPost('title')));
-	
+
 			if ($artist != '' && $title != '') {
 				$data = array(
 					'artist' => $artist,
@@ -41,26 +42,26 @@ class IndexController extends Zend_Controller_Action{
 		$this->view->album->id = null;
 		$this->view->album->artist = '';
 		$this->view->album->title = '';
-	
+
 		// additional view fields required by form
 		$this->view->action = 'add';
 		$this->view->buttonText = 'Add';
 	}
-	
+
 	function editAction() {
 		$this->view->title = "Edit Album";
 		$album = new Album();
-	
+
 		if ($this->_request->isPost()) {
 			Zend_Loader::loadClass('Zend_Filter_StripTags');
 			$filter = new Zend_Filter_StripTags();
-	
+
 			$id = (int)$this->_request->getPost('id');
 			$artist = $filter->filter($this->_request->getPost('artist'));
 			$artist = trim($artist);
 			$title = trim($filter->filter(
 			$this->_request->getPost('title')));
-	
+
 			if ($id !== false) {
 				if ($artist != '' && $title != '') {
 					$data = array(
@@ -87,11 +88,11 @@ class IndexController extends Zend_Controller_Action{
 		$this->view->action = 'edit';
 		$this->view->buttonText = 'Update';
 	} 
-	
+
 	function deleteAction() {
 		 $this->view->title = "Delete Album";
 		 $album = new Album();
-	
+
 		 if ($this->_request->isPost()) {
 			 Zend_Loader::loadClass('Zend_Filter_Alpha');
 			 $filter = new Zend_Filter_Alpha();
@@ -115,8 +116,6 @@ class IndexController extends Zend_Controller_Action{
 		 }
 		 // redirect back to the album list unless we have rendered the view
 		 $this->_redirect('/');
-	} 
-	
-	
+	}
 }
 ?>
