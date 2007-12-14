@@ -1,7 +1,7 @@
 <?php
 class IndexController extends Album_Controller_Action{
 	
-	public function init(){
+	public function init() {
 		parent::init();
 		$this->view->baseUrl = $this->_request->getBaseUrl();
 		Zend_Loader::loadClass('Album'); 
