@@ -10,7 +10,7 @@
 	function __autoload($class)	{
 		Zend_Loader::loadClass($class);
 	}
-	
+
 	// setup controller
 	$frontController = Zend_Controller_Front::getInstance();
 	$frontController->throwExceptions(true);
