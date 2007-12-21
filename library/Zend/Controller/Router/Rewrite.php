@@ -15,8 +15,8 @@
  * @package    Zend_Controller
  * @subpackage Router
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Rewrite.php 5768 2007-07-18 22:01:35Z thomas $
- * @license    http://www.zend.com/license/framework/1_0.txt Zend Framework License version 1.0
+ * @version    $Id: Rewrite.php 6872 2007-11-20 19:13:11Z matthew $
+ * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 /** Zend_Loader */
@@ -37,7 +37,7 @@ require_once 'Zend/Controller/Router/Route/Static.php';
  * @package    Zend_Controller
  * @subpackage Router
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
- * @license    http://www.zend.com/license/framework/1_0.txt Zend Framework License version 1.0
+ * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @see        http://manuals.rubyonrails.com/read/chapter/65
  */
 class Zend_Controller_Router_Rewrite extends Zend_Controller_Router_Abstract
@@ -63,7 +63,7 @@ class Zend_Controller_Router_Rewrite extends Zend_Controller_Router_Abstract
     /**
      * Add default routes which are used to mimic basic router behaviour
      */
-    protected function addDefaultRoutes()
+    public function addDefaultRoutes()
     {
         if (!$this->hasRoute('default')) {
 

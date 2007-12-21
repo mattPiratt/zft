@@ -48,7 +48,7 @@ require_once 'Zend/XmlRpc/Fault.php';
  * @package  Zend_XmlRpc
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version $Id: Request.php 5750 2007-07-18 20:49:47Z thomas $
+ * @version $Id: Request.php 6884 2007-11-20 21:45:28Z matthew $
  */
 class Zend_XmlRpc_Request
 {
@@ -82,6 +82,11 @@ class Zend_XmlRpc_Request
      */
     protected $_fault = null;
 
+    /**
+     * XML-RPC request params
+     * @var array
+     */
+    protected $_xmlRpcParams = array();
 
     /**
      * Create a new XML-RPC request

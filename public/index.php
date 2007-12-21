@@ -7,9 +7,7 @@
 
 	//If class not found instanciate it automatically
 	require_once 'Zend/Loader.php';
-	function __autoload($class)	{
-		Zend_Loader::loadClass($class);
-	}
+	Zend_Loader::registerAutoload();
 
 	// setup controller
 	$frontController = Zend_Controller_Front::getInstance();
