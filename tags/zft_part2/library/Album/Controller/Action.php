@@ -17,5 +17,4 @@ abstract class Album_Controller_Action extends Zend_Controller_Action {
 		Zend_Db_Table::setDefaultAdapter($db);
 	}
 }
-
 ?>
