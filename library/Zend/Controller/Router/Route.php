@@ -15,8 +15,8 @@
  * @package    Zend_Controller
  * @subpackage Router
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Route.php 5768 2007-07-18 22:01:35Z thomas $
- * @license    http://www.zend.com/license/framework/1_0.txt Zend Framework License version 1.0
+ * @version    $Id: Route.php 6905 2007-11-22 18:47:28Z martel $
+ * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 /** Zend_Controller_Router_Exception */
@@ -31,7 +31,7 @@ require_once 'Zend/Controller/Router/Route/Interface.php';
  * @package    Zend_Controller
  * @subpackage Router
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
- * @license    http://www.zend.com/license/framework/1_0.txt Zend Framework License version 1.0
+ * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @see        http://manuals.rubyonrails.com/read/chapter/65
  */
 class Zend_Controller_Router_Route implements Zend_Controller_Router_Route_Interface
@@ -256,12 +256,12 @@ class Zend_Controller_Router_Route implements Zend_Controller_Router_Route_Inter
 
         foreach (array_reverse($url, true) as $key => $value) {
             if ($flag || !isset($this->_parts[$key]['name']) || $value !== $this->getDefault($this->_parts[$key]['name'])) {
-                $return = '/' . $value . $return;
+                $return = $this->_urlDelimiter . $value . $return;
                 $flag = true;
             }
         }
 
-        return trim($return, '/');
+        return trim($return, $this->_urlDelimiter);
 
     }
 
