@@ -5,9 +5,9 @@
  * LICENSE
  *
  * This source file is subject to version 1.0 of the Zend Framework
- * license, that is bundled with this package in the file LICENSE, and
+ * license, that is bundled with this package in the file LICENSE.txt, and
  * is available through the world-wide-web at the following URL:
- * http://www.zend.com/license/framework/1_0.txt. If you did not receive
+ * http://framework.zend.com/license/new-bsd. If you did not receive
  * a copy of the Zend Framework license and are unable to obtain it
  * through the world-wide-web, please send a note to license@zend.com
  * so we can mail you a copy immediately.
@@ -16,8 +16,8 @@
  * @package    Zend_Controller
  * @subpackage Zend_Controller_Action
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Url.php 5768 2007-07-18 22:01:35Z thomas $
- * @license    http://www.zend.com/license/framework/1_0.txt Zend Framework License version 1.0
+ * @version    $Id: Url.php 6904 2007-11-22 18:44:10Z martel $
+ * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 /** Zend_Controller_Action_Helper_Abstract */
@@ -34,7 +34,7 @@ require_once 'Zend/Controller/Front.php';
  * @package    Zend_Controller
  * @subpackage Zend_Controller_Action
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
- * @license    http://www.zend.com/license/framework/1_0.txt Zend Framework License version 1.0
+ * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Controller_Action_Helper_Url extends Zend_Controller_Action_Helper_Abstract
 {
@@ -73,6 +73,8 @@ class Zend_Controller_Action_Helper_Url extends Zend_Controller_Action_Helper_Ab
             $url .= '/' . $paramString;
         }
 
+        $url = '/' . ltrim($url, '/');
+
         return $url;
     }
 
@@ -86,7 +88,7 @@ class Zend_Controller_Action_Helper_Url extends Zend_Controller_Action_Helper_Ab
      * @param  mixed $name The name of a Route to use. If null it will use the current Route
      * @return string Url for the link href attribute.
      */
-    public function url($urlOptions = array(), $name = null, $reset = false)
+    public function url($urlOptions = array(), $name = null, $reset = false, $encode = true)
     {
         $front  = Zend_Controller_Front::getInstance();
         $router = $front->getRouter();
@@ -95,16 +97,19 @@ class Zend_Controller_Action_Helper_Url extends Zend_Controller_Action_Helper_Ab
             try {
                 $name = $router->getCurrentRouteName();
             } catch (Zend_Controller_Router_Exception $e) {
-                if ($router->hasRoute('default')) {
-                    $name = 'default';
-                }
+                $name = 'default';
+            }
+        }
+
+        if ($encode) {
+            foreach ($urlOptions as $key => $option) {
+	        $urlOptions[$key] = urlencode($option);
             }
         }
 
         $route   = $router->getRoute($name);
-        $request = $this->getRequest();
 
-        $url  = rtrim($request->getBaseUrl(), '/') . '/';
+        $url  = rtrim($front->getBaseUrl(), '/') . '/';
         $url .= $route->assemble($urlOptions, $reset);
 
         return $url;
