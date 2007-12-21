@@ -16,7 +16,7 @@
  * @package    Zend_Locale
  * @subpackage Data
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Data.php 5775 2007-07-18 22:09:43Z thomas $
+ * @version    $Id: Data.php 6727 2007-11-03 19:29:21Z thomas $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -53,6 +53,15 @@ class Zend_Locale_Data
      * @access private
      */
     private static $_list = array();
+
+
+    /**
+     * internal cache for ldml values
+     * 
+     * @var Zend_Cache_Core
+     * @access private
+     */
+    private static $_cache = null;
 
 
     /**
@@ -146,7 +155,7 @@ class Zend_Locale_Data
         if (!empty(self::$_ldml[(string) $locale])) {
             while ($tok !== false) {
                 $search = $search . '/' . $tok;
-                if ((strpos($tok, '[@') !== false) and (strpos($tok, ']') === false)) {
+                if (((strpos($tok, '[@') !== false) or (strpos($search, '[@'))) and (strpos($tok, ']') === false)) {
                     $tok = strtok('/');
                     continue;
                 }
@@ -240,12 +249,23 @@ class Zend_Locale_Data
             $locale = new Zend_Locale();
         }
 
-        if (!Zend_Locale::isLocale($locale)) {
+        if ($locale instanceof Zend_Locale) {
+            $locale = $locale->toString();
+        }
+
+        if (!($locale = Zend_Locale::isLocale($locale))) {
             throw new Zend_Locale_Exception("Locale ($locale) is a unknown locale");
         }
 
-        if ($locale instanceof Zend_Locale) {
-            $locale = $locale->toString();
+        if (isset(self::$_cache)) {
+            $val = $value;
+            if (is_array($value)) {
+                $val = implode('_' , $value);
+            }
+            $id = strtr('Zend_Locale_' . $locale . '_' . $path . '_' . $val, array('-' => '_', '/' => '_'));
+            if ($result = self::$_cache->load($id)) {
+                return unserialize($result);
+            }
         }
 
         switch(strtolower($path)) {
@@ -736,6 +756,22 @@ class Zend_Locale_Data
                 throw new Zend_Locale_Exception("Unknown detail ($path) for parsing locale data.");
                 break;
         }
+
+        if (isset(self::$_cache)) {
+            self::$_cache->save( serialize(self::$_list), $id);
+        }
+
         return self::$_list;
+    }
+
+
+    /**
+     * Set a cache for Zend_Locale_Data
+     * 
+     * @param Zend_Cache_Core $cache a cache frontend
+     */
+    public static function setCache(Zend_Cache_Core $cache)
+    {
+        self::$_cache = $cache;
     }
 }
