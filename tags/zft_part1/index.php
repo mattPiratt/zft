@@ -14,7 +14,6 @@
 	Zend_Loader::loadClass('Zend_Db');
 	Zend_Loader::loadClass('Zend_Db_Table');
 
-	
 	// load configuration
 	$config = new Zend_Config_Ini('./application/config.ini', 'general');
 	$registry = Zend_Registry::getInstance();
@@ -29,8 +28,6 @@
 	$frontController = Zend_Controller_Front::getInstance();
 	$frontController->throwExceptions(true);
 	$frontController->setParam('useDefaultControllerAlways', true);
-//	$frontController->setBaseUrl('/zftutorial/');
-//	$frontController->setBaseUrl('/public/');
 	$frontController->setControllerDirectory('./application/controllers');
 
 	// run!
