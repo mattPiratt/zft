@@ -17,6 +17,7 @@
  * @package    Zend_Gdata
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ */
 
 /**
  * Zend_Http_Client
@@ -148,8 +149,7 @@ class Zend_Gdata_AuthSub
         }
         $client->setUri(self::AUTHSUB_REVOKE_TOKEN_URI);
         $headers['authorization'] = 'AuthSub token="' . $token . '"';
-        $useragent = 'Zend_Framework_Gdata/' . Zend_Version::VERSION .
-                ' ' . $source;
+        $useragent = 'Zend_Framework_Gdata/' . Zend_Version::VERSION;
         $client->setConfig(array(
                 'strictredirects' => true,
                 'useragent' => $useragent

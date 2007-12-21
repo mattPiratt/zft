@@ -166,7 +166,7 @@ class Zend_Config implements Countable, Iterator
     {
         $array = array();
         foreach ($this->_data as $key => $value) {
-            if (is_object($value)) {
+            if ($value instanceof Zend_Config) {
                 $array[$key] = $value->toArray();
             } else {
                 $array[$key] = $value;
@@ -184,6 +184,21 @@ class Zend_Config implements Countable, Iterator
     protected function __isset($name)
     {
         return isset($this->_data[$name]);
+    }
+
+    /**
+     * Support unset() overloading on PHP 5.1
+     *
+     * @param string $name
+     */
+    protected function __unset($name)
+    {
+        if ($this->_allowModifications) {
+            unset($this->_data[$name]);
+        } else {
+            throw new Zend_Config_Exception('Zend_Config is read only');
+        }
+
     }
 
     /**
@@ -264,6 +279,43 @@ class Zend_Config implements Countable, Iterator
     public function areAllSectionsLoaded()
     {
         return $this->_loadedSection === null;
+    }
+
+
+    /**
+     * Merge another Zend_Config with this one. The items
+     * in $merge will override the same named items in
+     * the current config.
+     *
+     * @param Zend_Config $merge
+     * @return Zend_Config
+     */
+    public function merge(Zend_Config $merge)
+    {
+        foreach($merge as $key => $item) {
+            if(array_key_exists($key, $this->_data)) {
+                if($item instanceof Zend_Config && $this->$key instanceof Zend_Config) {
+                    $this->$key = $this->$key->merge($item);
+                } else {
+                    $this->$key = $item;
+                }
+            } else {
+                $this->$key = $item;
+            }
+        }
+
+        return $this;
+    }
+    
+    /**
+     * Prevent any more modifications being made to this instance. Useful
+     * after merge() has been used to merge multiple Zend_Config objects
+     * into one object which should then not be modified again.
+     *
+     */
+    public function setReadOnly()
+    {
+        $this->_allowModifications = false;
     }
 
     /**

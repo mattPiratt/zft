@@ -191,25 +191,11 @@ class Zend_Loader
      */
     public static function isReadable($filename)
     {
-        if (@is_readable($filename)) {
-            return true;
+        if (!$fh = @fopen($filename, 'r', true)) {
+            return false;
         }
 
-        $path = get_include_path();
-        $dirs = explode(PATH_SEPARATOR, $path);
-
-        foreach ($dirs as $dir) {
-            // No need to check against current dir -- already checked
-            if ('.' == $dir) {
-                continue;
-            }
-
-            if (@is_readable($dir . DIRECTORY_SEPARATOR . $filename)) {
-                return true;
-            }
-        }
-
-        return false;
+        return true;
     }
 
     /**
@@ -237,11 +223,12 @@ class Zend_Loader
      * Register {@link autoload()} with spl_autoload()
      *
      * @param string OPTIONAL $class
+     * @param boolean OPTIONAL $enabled
      * @return void
      * @throws Zend_Exception if spl_autoload() is not found
      * or if the specified class does not have an autoload() method.
      */
-    public static function registerAutoload($class = 'Zend_Loader')
+    public static function registerAutoload($class = 'Zend_Loader', $enabled = true)
     {
         if (!function_exists('spl_autoload_register')) {
             require_once 'Zend/Exception.php';
@@ -255,6 +242,10 @@ class Zend_Loader
             throw new Zend_Exception("The class \"$class\" does not have an autoload() method");
         }
 
-        spl_autoload_register(array($class, 'autoload'));
+        if ($enabled === true) {
+            spl_autoload_register(array($class, 'autoload'));
+        } else {
+            spl_autoload_unregister(array($class, 'autoload'));
+        }
     }
 }
