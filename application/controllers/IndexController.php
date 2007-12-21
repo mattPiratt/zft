@@ -1,10 +1,9 @@
 <?php
-class IndexController extends Album_Controller_Action{
-	
-	public function init() {
-		parent::init();
+class IndexController extends Zend_Controller_Action{
+
+	public function init(){
 		$this->view->baseUrl = $this->_request->getBaseUrl();
-		Zend_Loader::loadClass('Album'); 
+		Zend_Loader::loadClass('Album');
 	}
 
 	function indexAction() {
@@ -25,7 +24,7 @@ class IndexController extends Album_Controller_Action{
 			$artist = trim($artist);
 			$title = trim($filter->filter(
 			$this->_request->getPost('title')));
-
+	
 			if ($artist != '' && $title != '') {
 				$data = array(
 					'artist' => $artist,
@@ -47,7 +46,7 @@ class IndexController extends Album_Controller_Action{
 		$this->view->action = 'add';
 		$this->view->buttonText = 'Add';
 	}
-
+	
 	function editAction() {
 		$this->view->title = "Edit Album";
 		$album = new Album();
@@ -70,7 +69,7 @@ class IndexController extends Album_Controller_Action{
 					);
 					$where = 'id = ' . $id;
 					$album->update($data, $where);
-	
+
 					$this->_redirect('/');
 					return;
 				} else {
@@ -87,35 +86,36 @@ class IndexController extends Album_Controller_Action{
 		// additional view fields required by form
 		$this->view->action = 'edit';
 		$this->view->buttonText = 'Update';
-	} 
+	}
 
 	function deleteAction() {
-		 $this->view->title = "Delete Album";
-		 $album = new Album();
+		$this->view->title = "Delete Album";
+		$album = new Album();
 
-		 if ($this->_request->isPost()) {
-			 Zend_Loader::loadClass('Zend_Filter_Alpha');
-			 $filter = new Zend_Filter_Alpha();
-	
-			 $id = (int)$this->_request->getPost('id');
-			 $del = $filter->filter($this->_request->getPost('del'));
-			 if ($del == 'Yes' && $id > 0) {
-				 $where = 'id = ' . $id;
-				 $rows_affected = $album->delete($where);
-			 }
-		 } else {
-			 $id = (int)$this->_request->getParam('id');
-			 if ($id > 0) {
-				 // only render if we have an id and can find the album.
-				 $this->view->album = $album->fetchRow('id='.$id);
-				 if ($this->view->album->id > 0) {
-					 // render template automatically
-					 return;
-				 }
-			 }
-		 }
-		 // redirect back to the album list unless we have rendered the view
-		 $this->_redirect('/');
+		if ($this->_request->isPost()) {
+			Zend_Loader::loadClass('Zend_Filter_Alpha');
+			$filter = new Zend_Filter_Alpha();
+
+			$id = (int)$this->_request->getPost('id');
+			$del = $filter->filter($this->_request->getPost('del'));
+			if ($del == 'Yes' && $id > 0) {
+				$where = 'id = ' . $id;
+				$rows_affected = $album->delete($where);
+			}
+		} else {
+			$id = (int)$this->_request->getParam('id');
+			if ($id > 0) {
+				// only render if we have an id and can find the album.
+				$this->view->album = $album->fetchRow('id='.$id);
+				if ($this->view->album->id > 0) {
+					// render template automatically
+					return;
+				}
+			}
+		}
+		// redirect back to the album list unless we have rendered the view
+		$this->_redirect('/');
 	}
+
 }
 ?>

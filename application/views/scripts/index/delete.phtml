@@ -1,3 +1,4 @@
+	<?php echo $this->render('header.phtml'); ?>
 	<h1><?php echo $this->escape($this->title); ?></h1>
 
 	<?php if ($this->album) :?>
@@ -16,3 +17,5 @@
 	<?php else: ?>
 	<p>Cannot find album.</p>
 	<?php endif;?>
+
+	<?php echo $this->render('footer.phtml'); ?> 
