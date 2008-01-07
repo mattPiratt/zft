@@ -4,7 +4,6 @@ class IndexController extends Album_Controller_Action{
 	public function init() {
 		parent::init();
 		$this->view->baseUrl = $this->_request->getBaseUrl();
-		Zend_Loader::loadClass('Album'); 
 	}
 
 	function indexAction() {
@@ -18,7 +17,6 @@ class IndexController extends Album_Controller_Action{
 		$this->view->title = "Add New Album";
 
 		if ($this->_request->isPost()) {
-			Zend_Loader::loadClass('Zend_Filter_StripTags');
 			$filter = new Zend_Filter_StripTags();
 
 			$artist = $filter->filter($this->_request->getPost('artist'));
@@ -53,7 +51,6 @@ class IndexController extends Album_Controller_Action{
 		$album = new Album();
 
 		if ($this->_request->isPost()) {
-			Zend_Loader::loadClass('Zend_Filter_StripTags');
 			$filter = new Zend_Filter_StripTags();
 
 			$id = (int)$this->_request->getPost('id');
@@ -94,7 +91,6 @@ class IndexController extends Album_Controller_Action{
 		$album = new Album();
 
 		if ($this->_request->isPost()) {
-			Zend_Loader::loadClass('Zend_Filter_Alpha');
 			$filter = new Zend_Filter_Alpha();
 
 			$id = (int)$this->_request->getPost('id');
