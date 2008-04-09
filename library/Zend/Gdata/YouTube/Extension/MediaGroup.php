@@ -15,7 +15,7 @@
  *
  * @category   Zend
  * @package    Zend_Gdata
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -42,7 +42,7 @@ require_once 'Zend/Gdata/YouTube/Extension/Duration.php';
  *
  * @category   Zend
  * @package    Zend_Gdata
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_YouTube_Extension_MediaGroup extends Zend_Gdata_Media_Extension_MediaGroup
@@ -80,12 +80,12 @@ class Zend_Gdata_YouTube_Extension_MediaGroup extends Zend_Gdata_Media_Extension
     {
         $absoluteNodeName = $child->namespaceURI . ':' . $child->localName;
         switch ($absoluteNodeName) {
-            case $this->lookupNamespace('media') . ':' . 'content'; 
+            case $this->lookupNamespace('media') . ':' . 'content':
                 $content = new Zend_Gdata_YouTube_Extension_MediaContent();
                 $content->transferFromDOM($child);
                 $this->_content[] = $content;
                 break;
-            case $this->lookupNamespace('yt') . ':' . 'duration'; 
+            case $this->lookupNamespace('yt') . ':' . 'duration':
                 $duration = new Zend_Gdata_YouTube_Extension_Duration();
                 $duration->transferFromDOM($child);
                 $this->_duration = $duration;
@@ -94,6 +94,28 @@ class Zend_Gdata_YouTube_Extension_MediaGroup extends Zend_Gdata_Media_Extension
             parent::takeChildFromDOM($child);
             break;
         }
+    }
+
+    /**
+     * Returns the duration value of this element
+     *
+     * @return Zend_Gdata_YouTube_Extension_Duration
+     */
+    public function getDuration()
+    {
+        return $this->_duration;
+    }
+
+    /**
+     * Sets the duration value of this element
+     *
+     * @param Zend_Gdata_YouTube_Extension_Duration $value The duration value
+     * @return Zend_Gdata_YouTube_Extension_MediaGroup Provides a fluent interface
+     */
+    public function setDuration($value)
+    {
+        $this->_duration = $value;
+        return $this;
     }
 
 }
