@@ -15,7 +15,7 @@
  *
  * @category   Zend
  * @package    Zend_Gdata
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -28,6 +28,11 @@ require_once 'Zend/Gdata/Entry.php';
  * @see Zend_Gdata_Extension_FeedLink
  */
 require_once 'Zend/Gdata/Extension/FeedLink.php';
+
+/**
+ * @see Zend_Gdata_YouTube_Extension_Description
+ */
+require_once 'Zend/Gdata/YouTube/Extension/Description.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_Age
@@ -99,7 +104,7 @@ require_once 'Zend/Gdata/YouTube/Extension/Relationship.php';
  *
  * @category   Zend
  * @package    Zend_Gdata
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_YouTube_UserProfileEntry extends Zend_Gdata_Entry
@@ -120,6 +125,13 @@ class Zend_Gdata_YouTube_UserProfileEntry extends Zend_Gdata_Entry
      * @var string
      */ 
     protected $_username = null;
+
+    /**
+     * The description of the user
+     *
+     * @var string
+     */
+    protected $_description = null;
 
     /**
      * The age of the user
@@ -233,6 +245,9 @@ class Zend_Gdata_YouTube_UserProfileEntry extends Zend_Gdata_Entry
     public function getDOM($doc = null)
     {
         $element = parent::getDOM($doc);
+        if ($this->_description != null) {
+            $element->appendChild($this->_description->getDOM($element->ownerDocument));
+        }
         if ($this->_age != null) {
             $element->appendChild($this->_age->getDOM($element->ownerDocument));
         }
