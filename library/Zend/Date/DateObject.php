@@ -14,22 +14,17 @@
  *
  * @category   Zend
  * @package    Zend_Date
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: DateObject.php 6727 2007-11-03 19:29:21Z thomas $
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @version    $Id: DateObject.php 8064 2008-02-16 10:58:39Z thomas $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 
 /**
- * Include needed Date classes
- */
-require_once 'Zend/Date/Exception.php';
-
-/**
  * @category   Zend
  * @package    Zend_Date
  * @subpackage Zend_Date_DateObject
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Date_DateObject {
@@ -39,8 +34,9 @@ abstract class Zend_Date_DateObject {
      * UNIX Timestamp
      */
     private   $_unixTimestamp;
-    protected static $_cache = null;
-
+    protected static $_cache         = null;
+    protected static $_defaultOffset = 0;
+    
 
     /**
      * active timezone
@@ -51,7 +47,7 @@ abstract class Zend_Date_DateObject {
 
     // turn off DST correction if UTC or GMT
     protected $_dst         = true;
-    
+
     /**
      * Table of Monthdays
      */
@@ -93,6 +89,7 @@ abstract class Zend_Date_DateObject {
         } else if ($timestamp === null) {
             $this->_unixTimestamp = time();
         } else {
+            require_once 'Zend/Date/Exception.php';
             throw new Zend_Date_Exception('\'' . $timestamp . '\' is not a valid UNIX timestamp', $timestamp);
         }
 
@@ -154,7 +151,7 @@ abstract class Zend_Date_DateObject {
      */
     protected function mktime($hour, $minute, $second, $month, $day, $year, $gmt = false)
     {
-
+        
         // complete date but in 32bit timestamp - use PHP internal
         if ((1901 < $year) and ($year < 2038)) {
 
@@ -262,7 +259,7 @@ abstract class Zend_Date_DateObject {
                 $date  = -12219321600;
             }
         }
- 
+
         if (isset(self::$_cache)) {
             self::$_cache->save( serialize($date), $id);
         }
@@ -312,14 +309,12 @@ abstract class Zend_Date_DateObject {
             date_default_timezone_set($this->_timezone);
         }
         if ($timestamp === null) {
-
             $result = ($gmt) ? @gmdate($format) : @date($format);
             date_default_timezone_set($oldzone);
             return $result;
         }
 
         if (abs($timestamp) <= 0x7FFFFFFF) {
-
             $result = ($gmt) ? @gmdate($format, $timestamp) : @date($format, $timestamp);
             date_default_timezone_set($oldzone);
             return $result;
@@ -345,10 +340,10 @@ abstract class Zend_Date_DateObject {
                 if ($dst === 1) {
                     $timestamp += 3600;
                 }
-                $temp = new DateTime('@'.$tempstamp);
-                $timestamp += $temp->getOffset();
+                $temp = date('Z', $tempstamp);
+                $timestamp += $temp;
             }
-        
+
             if (isset(self::$_cache)) {
                 self::$_cache->save( serialize($timestamp), $idstamp);
             }
@@ -359,7 +354,7 @@ abstract class Zend_Date_DateObject {
             $timestamp -= $this->_offset;
         }
         date_default_timezone_set($oldzone);
-        
+
         $date = $this->getDateParts($timestamp, true);
         $length = strlen($format);
         $output = '';
@@ -1016,14 +1011,15 @@ abstract class Zend_Date_DateObject {
             $zone = $oldzone;
         }
 
-        // throw an error on false input, but only if the new date extension is avaiable
+        // throw an error on false input, but only if the new date extension is available
         if (function_exists('timezone_open')) {
             if (!@timezone_open($zone)) {
+                require_once 'Zend/Date/Exception.php';
                 throw new Zend_Date_Exception("timezone ($zone) is not a known timezone", $zone);
             }
         }
-        // this can generate an error if the date extension is not avaiable and a false timezone is given
-        $result = date_default_timezone_set($zone);
+        // this can generate an error if the date extension is not available and a false timezone is given
+        $result = @date_default_timezone_set($zone);
         if ($result === true) {
             $this->_offset   = mktime(0, 0, 0, 1, 2, 1970) - gmmktime(0, 0, 0, 1, 2, 1970);
             $this->_timezone = $zone;
