@@ -16,9 +16,9 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage Adapter
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Mysqli.php 6289 2007-09-11 01:21:38Z bkarwin $
+ * @version    $Id: Mysqli.php 8943 2008-03-20 21:43:37Z thomas $
  */
 
 
@@ -47,7 +47,7 @@ require_once 'Zend/Db/Statement/Mysqli.php';
  * @category   Zend
  * @package    Zend_Db
  * @subpackage Adapter
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Db_Adapter_Mysqli extends Zend_Db_Adapter_Abstract
@@ -170,7 +170,7 @@ class Zend_Db_Adapter_Mysqli extends Zend_Db_Adapter_Abstract
     public function describeTable($tableName, $schemaName = null)
     {
         /**
-         * @todo: use INFORMATION_SCHEMA someday when
+         * @todo  use INFORMATION_SCHEMA someday when
          * MySQL's implementation isn't too slow.
          */
 
@@ -398,6 +398,7 @@ class Zend_Db_Adapter_Mysqli extends Zend_Db_Adapter_Abstract
      *
      * @param int $mode
      * @return void
+     * @throws Zend_Db_Adapter_Mysqli_Exception
      */
     public function setFetchMode($mode)
     {

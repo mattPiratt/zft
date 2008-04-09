@@ -16,9 +16,9 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage Adapter
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Abstract.php 6829 2007-11-15 16:07:41Z darby $
+ * @version    $Id: Abstract.php 8491 2008-02-29 22:36:55Z peptolab $
  */
 
 
@@ -49,7 +49,7 @@ require_once 'Zend/Loader.php';
  * @category   Zend
  * @package    Zend_Db
  * @subpackage Adapter
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Db_Adapter_Abstract
@@ -273,6 +273,16 @@ abstract class Zend_Db_Adapter_Abstract
     }
 
     /**
+     * Returns the configuration variables in this adapter.
+     *
+     * @return array
+     */
+    public function getConfig()
+    {
+        return $this->_config;
+    }
+
+    /**
      * Set the adapter's profiler object.
      *
      * The argument may be a boolean, an associative array, an instance of
@@ -336,7 +346,7 @@ abstract class Zend_Db_Adapter_Abstract
         }
 
         if ($profilerInstance === null) {
-            Zend_Loader::loadClass($profilerClass);
+            @Zend_Loader::loadClass($profilerClass);
             $profilerInstance = new $profilerClass();
         }
 
@@ -594,14 +604,38 @@ abstract class Zend_Db_Adapter_Abstract
      * Fetches all SQL result rows as a sequential array.
      * Uses the current fetchMode for the adapter.
      *
-     * @param  string|Zend_Db_Select $sql  An SQL SELECT statement.
-     * @param  mixed                 $bind Data to bind into SELECT placeholders.
+     * @param string|Zend_Db_Select $sql  An SQL SELECT statement.
+     * @param mixed                 $bind Data to bind into SELECT placeholders.
+     * @param mixed                 $fetchMode Override current fetch mode.
      * @return array
      */
-    public function fetchAll($sql, $bind = array())
+    public function fetchAll($sql, $bind = array(), $fetchMode = null)
     {
+        if ($fetchMode === null) {
+            $fetchMode = $this->_fetchMode;
+        }
         $stmt = $this->query($sql, $bind);
-        $result = $stmt->fetchAll($this->_fetchMode);
+        $result = $stmt->fetchAll($fetchMode);
+        return $result;
+    }
+
+    /**
+     * Fetches the first row of the SQL result.
+     * Uses the current fetchMode for the adapter.
+     *
+     * @param string|Zend_Db_Select $sql An SQL SELECT statement.
+     * @param mixed $bind Data to bind into SELECT placeholders.
+     * @param mixed                 $fetchMode Override current fetch mode.
+     * @return array
+     */
+    public function fetchRow($sql, $bind = array(), $fetchMode = null)
+    {
+        if ($fetchMode === null) {
+            $fetchMode = $this->_fetchMode;
+        }
+        $stmt = $this->query($sql, $bind);
+        $result = $stmt->fetch($fetchMode);
+        $stmt->closeCursor();
         return $result;
     }
 
@@ -681,22 +715,6 @@ abstract class Zend_Db_Adapter_Abstract
     }
 
     /**
-     * Fetches the first row of the SQL result.
-     * Uses the current fetchMode for the adapter.
-     *
-     * @param string|Zend_Db_Select $sql An SQL SELECT statement.
-     * @param mixed $bind Data to bind into SELECT placeholders.
-     * @return array
-     */
-    public function fetchRow($sql, $bind = array())
-    {
-        $stmt = $this->query($sql, $bind);
-        $result = $stmt->fetch($this->_fetchMode);
-        $stmt->closeCursor();
-        return $result;
-    }
-
-    /**
      * Quote a raw string.
      *
      * @param string $value     Raw string
@@ -723,6 +741,10 @@ abstract class Zend_Db_Adapter_Abstract
     public function quote($value, $type = null)
     {
         $this->_connect();
+
+        if ($value instanceof Zend_Db_Select) {
+            return '(' . $value->__toString() . ')';
+        }
 
         if ($value instanceof Zend_Db_Expr) {
             return $value->__toString();
@@ -779,14 +801,25 @@ abstract class Zend_Db_Adapter_Abstract
      * // $safe = "WHERE date < '2005-01-02'"
      * </code>
      *
-     * @param string $text  The text with a placeholder.
-     * @param mixed  $value The value to quote.
-     * @param string $type  OPTIONAL SQL datatype
+     * @param string  $text  The text with a placeholder.
+     * @param mixed   $value The value to quote.
+     * @param string  $type  OPTIONAL SQL datatype
+     * @param integer $count OPTIONAL count of placeholders to replace
      * @return string An SQL-safe quoted value placed into the orignal text.
      */
-    public function quoteInto($text, $value, $type = null)
+    public function quoteInto($text, $value, $type = null, $count = null)
     {
-        return str_replace('?', $this->quote($value, $type), $text);
+        if ($count === null) {
+            return str_replace('?', $this->quote($value, $type), $text);
+        } else {
+            while ($count > 0) {
+                if (strpos($text, '?') != false) {
+                    $text = substr_replace($text, $this->quote($value), strpos($text, '?'), 1);
+                }
+                --$count;
+            }
+            return $text;
+        }
     }
 
     /**
@@ -837,7 +870,7 @@ abstract class Zend_Db_Adapter_Abstract
      * @param boolean $auto If true, heed the AUTO_QUOTE_IDENTIFIERS config option.
      * @return string The quoted identifier and alias.
      */
-    public function quoteTableAs($ident, $alias, $auto=false)
+    public function quoteTableAs($ident, $alias = null, $auto=false)
     {
         return $this->_quoteIdentifierAs($ident, $alias, $auto);
     }
@@ -855,6 +888,8 @@ abstract class Zend_Db_Adapter_Abstract
     {
         if ($ident instanceof Zend_Db_Expr) {
             $quoted = $ident->__toString();
+        } elseif ($ident instanceof Zend_Db_Select) {
+            $quoted = '(' . $ident->__toString() . ')';
         } else {
             if (is_string($ident)) {
                 $ident = explode('.', $ident);
@@ -1056,6 +1091,8 @@ abstract class Zend_Db_Adapter_Abstract
      * Set the fetch mode.
      *
      * @param integer $mode
+     * @return void
+     * @throws Zend_Db_Adapter_Exception
      */
     abstract public function setFetchMode($mode);
 
