@@ -12,25 +12,24 @@
  * through the world-wide-web, please send a note to license@zend.com
  * so we can mail you a copy immediately.
  *
+ * @category   Zend
  * @package    Zend_Mail
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ * @version    $Id: Part.php 8064 2008-02-16 10:58:39Z thomas $
  */
 
 
 /**
- * Zend_Mime_Decode
+ * @see Zend_Mime_Decode
  */
 require_once 'Zend/Mime/Decode.php';
 
-/**
- * Zend_Mail_Exception
- */
-require_once 'Zend/Mail/Exception.php';
 
 /**
+ * @category   Zend
  * @package    Zend_Mail
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Mail_Part implements RecursiveIterator
@@ -94,15 +93,24 @@ class Zend_Mail_Part implements RecursiveIterator
      * - noToplines ignore content found after headers in param 'headers'
      * - content    content as string
      *
-     * @param array $params  full message with or without headers
+     * @param   array $params  full message with or without headers
+     * @throws  Zend_Mail_Exception
      */
     public function __construct(array $params)
     {
         if (isset($params['handler'])) {
             if (!$params['handler'] instanceof Zend_Mail_Storage_Abstract) {
+                /**
+                 * @see Zend_Mail_Exception
+                 */
+                require_once 'Zend/Mail/Exception.php';
                 throw new Zend_Mail_Exception('handler is not a valid mail handler');
             }
             if (!isset($params['id'])) {
+                /**
+                 * @see Zend_Mail_Exception
+                 */
+                require_once 'Zend/Mail/Exception.php';
                 throw new Zend_Mail_Exception('need a message id with a handler');
             }
 
@@ -160,6 +168,10 @@ class Zend_Mail_Part implements RecursiveIterator
         if ($this->_mail) {
             return $this->_mail->getRawContent($this->_messageNum);
         } else {
+            /**
+             * @see Zend_Mail_Exception
+             */
+            require_once 'Zend/Mail/Exception.php';
             throw new Zend_Mail_Exception('no content');
         }
     }
@@ -184,6 +196,10 @@ class Zend_Mail_Part implements RecursiveIterator
         // split content in parts
         $boundary = $this->getHeaderField('content-type', 'boundary');
         if (!$boundary) {
+            /**
+             * @see Zend_Mail_Exception
+             */
+            require_once 'Zend/Mail/Exception.php';
             throw new Zend_Mail_Exception('no boundary found in content type to split message');
         }
         $parts = Zend_Mime_Decode::splitMessageStruct($this->_content, $boundary);
@@ -207,6 +223,10 @@ class Zend_Mail_Part implements RecursiveIterator
         }
 
         if (!$this->_mail && $this->_content === null) {
+            /**
+             * @see Zend_Mail_Exception
+             */
+            require_once 'Zend/Mail/Exception.php';
             throw new Zend_Mail_Exception('part not found');
         }
 
@@ -218,6 +238,10 @@ class Zend_Mail_Part implements RecursiveIterator
         $this->_cacheContent();
 
         if (!isset($this->_parts[$num])) {
+            /**
+             * @see Zend_Mail_Exception
+             */
+            require_once 'Zend/Mail/Exception.php';
             throw new Zend_Mail_Exception('part not found');
         }
 
@@ -296,6 +320,10 @@ class Zend_Mail_Part implements RecursiveIterator
         if (!isset($this->_headers[$lowerName])) {
             $lowerName = strtolower(preg_replace('%([a-z])([A-Z])%', '\1-\2', $name));
             if (!isset($this->_headers[$lowerName])) {
+                /**
+                 * @see Zend_Mail_Exception
+                 */
+                require_once 'Zend/Mail/Exception.php';
                 throw new Zend_Mail_Exception("no Header with Name $name found");
             }
         }
@@ -317,7 +345,7 @@ class Zend_Mail_Part implements RecursiveIterator
 
         return $header;
     }
-     
+    
     /**
      * Get a specific field from a header like content type or all fields as array
      *
@@ -334,8 +362,9 @@ class Zend_Mail_Part implements RecursiveIterator
      * @throws Zend_Exception, Zend_Mail_Exception
      */
     public function getHeaderField($name, $wantedPart = 0, $firstName = 0) {
-        return Zend_Mime_Decode::splitHeaderField(current($this->getHeader($name, 'array')), $wantedPart, $firstName);
+    	return Zend_Mime_Decode::splitHeaderField(current($this->getHeader($name, 'array')), $wantedPart, $firstName);
     }
+
 
     /**
      * Getter for mail headers - name is matched in lowercase
