@@ -15,9 +15,9 @@
  *
  * @category   Zend
  * @package    Zend_Db
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Db.php 6289 2007-09-11 01:21:38Z bkarwin $
+ * @version    $Id: Db.php 8084 2008-02-17 01:41:23Z peptolab $
  */
 
 
@@ -26,18 +26,13 @@
  */
 require_once 'Zend/Loader.php';
 
-/**
- * @see Zend_Db_Exception
- */
-require_once 'Zend/Db/Exception.php';
-
 
 /**
  * Class for connecting to SQL databases and performing common operations.
  *
  * @category   Zend
  * @package    Zend_Db
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Db
@@ -59,7 +54,7 @@ class Zend_Db
     const AUTO_QUOTE_IDENTIFIERS = 'autoQuoteIdentifiers';
 
     /**
-     * Use the INT_TYPE, BIGINT_TYPE, and FLOAT_TYPE with the quoteType() method.
+     * Use the INT_TYPE, BIGINT_TYPE, and FLOAT_TYPE with the quote() method.
      */
     const INT_TYPE    = 0;
     const BIGINT_TYPE = 1;
@@ -170,18 +165,18 @@ class Zend_Db
     /**
      * Factory for Zend_Db_Adapter_Abstract classes.
      *
-     * First argument may be a string containing the base of the adapter class 
-     * name, e.g. 'Mysqli' corresponds to class Zend_Db_Adapter_Mysqli.  This 
+     * First argument may be a string containing the base of the adapter class
+     * name, e.g. 'Mysqli' corresponds to class Zend_Db_Adapter_Mysqli.  This
      * is case-insensitive.
      *
      * First argument may alternatively be an object of type Zend_Config.
      * The adapter class base name is read from the 'adapter' property.
      * The adapter config parameters are read from the 'params' property.
      *
-     * Second argument is optional and may be an associative array of key-value 
-     * pairs.  This is used as the argument to the adapter constructor.  
+     * Second argument is optional and may be an associative array of key-value
+     * pairs.  This is used as the argument to the adapter constructor.
      *
-     * If the first argument is of type Zend_Config, it is assumed to contain 
+     * If the first argument is of type Zend_Config, it is assumed to contain
      * all parameters, and the second argument is ignored.
      *
      * @param  mixed $adapter String name of base adapter class, or Zend_Config object.
@@ -243,7 +238,7 @@ class Zend_Db
          * Load the adapter class.  This throws an exception
          * if the specified class cannot be loaded.
          */
-        Zend_Loader::loadClass($adapterName);
+        @Zend_Loader::loadClass($adapterName);
 
         /*
          * Create an instance of the adapter class.
