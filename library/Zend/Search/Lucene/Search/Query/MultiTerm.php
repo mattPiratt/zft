@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Search
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -31,7 +31,7 @@ require_once 'Zend/Search/Lucene/Search/Weight/MultiTerm.php';
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Search
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Search_Lucene_Search_Query_MultiTerm extends Zend_Search_Lucene_Search_Query
@@ -103,7 +103,6 @@ class Zend_Search_Lucene_Search_Query_MultiTerm extends Zend_Search_Lucene_Searc
      *
      * @param array $terms    Array of Zend_Search_Lucene_Index_Term objects
      * @param array $signs    Array of signs.  Sign is boolean|null.
-     * @return void
      */
     public function __construct($terms = null, $signs = null)
     {
@@ -139,6 +138,7 @@ class Zend_Search_Lucene_Search_Query_MultiTerm extends Zend_Search_Lucene_Searc
     public function addTerm(Zend_Search_Lucene_Index_Term $term, $sign = null) {
         if ($sign !== true || $this->_signs !== null) {       // Skip, if all terms are required
             if ($this->_signs === null) {                     // Check, If all previous terms are required
+                $this->_signs = array();
                 foreach ($this->_terms as $prevTerm) {
                     $this->_signs[] = true;
                 }
