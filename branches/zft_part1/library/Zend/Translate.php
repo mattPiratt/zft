@@ -14,18 +14,21 @@
  *
  * @category   Zend
  * @package    Zend_Translate
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @version    $Id: Date.php 2498 2006-12-23 22:13:38Z thomas $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
+/**
+ * @see Zend_Loader
+ */
 require_once 'Zend/Loader.php';
 
 
 /**
  * @category   Zend
  * @package    Zend_Translate
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Translate {
@@ -43,12 +46,14 @@ class Zend_Translate {
 
     const LOCALE_DIRECTORY = 1;
     const LOCALE_FILENAME  = 2;
+
     /**
      * Adapter
      *
      * @var Zend_Translate_Adapter
      */
     private $_adapter;
+    private static $_cache = null;
 
 
     /**
@@ -105,7 +110,10 @@ class Zend_Translate {
                 break;
         }
 
-        Zend_Loader::loadClass($adapter);
+        @Zend_Loader::loadClass($adapter);
+        if (self::$_cache !== null) {
+            call_user_func(array($adapter, 'setCache'), self::$_cache);
+        }
         $this->_adapter = new $adapter($data, $locale, $options);
         if (!$this->_adapter instanceof Zend_Translate_Adapter) {
             require_once 'Zend/Translate/Exception.php';
@@ -126,6 +134,17 @@ class Zend_Translate {
 
 
     /**
+     * Sets a cache for all instances of Zend_Translate
+     *
+     * @param Zend_Cache_Core $cache Cache to store to
+     */
+    public static function setCache(Zend_Cache_Core $cache)
+    {
+        self::$_cache = $cache;
+    }
+
+
+    /**
      * Calls all methods from the adapter
      */
     public function __call($method, array $options)
@@ -133,6 +152,7 @@ class Zend_Translate {
         if (method_exists($this->_adapter, $method)) {
             return call_user_func_array(array($this->_adapter, $method), $options);
         }
+        require_once 'Zend/Translate/Exception.php';
         throw new Zend_Translate_Exception("Unknown method '" . $method . "' called!");
     }
 }
