@@ -14,8 +14,8 @@
  *
  * @category   Zend
  * @package    Zend_Measure
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Abstract.php 6334 2007-09-13 19:00:27Z thomas $
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @version    $Id: Abstract.php 8907 2008-03-19 20:10:01Z thomas $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -29,7 +29,7 @@ require_once 'Zend/Locale/Format.php';
  * @category   Zend
  * @package    Zend_Measure
  * @subpackage Zend_Measure_Abstract
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Measure_Abstract
@@ -83,6 +83,7 @@ abstract class Zend_Measure_Abstract
         }
 
         if (!$this->_Locale = Zend_Locale::isLocale($locale, true)) {
+            require_once 'Zend/Measure/Exception.php';
             throw new Zend_Measure_Exception("Language ($locale) is unknown");
         }
 
@@ -93,6 +94,7 @@ abstract class Zend_Measure_Abstract
         }
 
         if (!array_key_exists($type, $this->_UNITS)) {
+            require_once 'Zend/Measure/Exception.php';
             throw new Zend_Measure_Exception("Type ($type) is unknown");
         }
         $this->setValue($value, $type, $this->_Locale);
@@ -137,6 +139,7 @@ abstract class Zend_Measure_Abstract
         }
 
         if (!Zend_Locale::isLocale($locale)) {
+            require_once 'Zend/Measure/Exception.php';
             throw new Zend_Measure_Exception("Language ($locale) is unknown");
         }
 
@@ -145,12 +148,14 @@ abstract class Zend_Measure_Abstract
         }
 
         if (empty($this->_UNITS[$type])) {
+            require_once 'Zend/Measure/Exception.php';
             throw new Zend_Measure_Exception("Type ($type) is unknown");
         }
 
         try {
             $value = Zend_Locale_Format::getNumber($value, array('locale' => $locale));
         } catch(Exception $e) {
+            require_once 'Zend/Measure/Exception.php';
             throw new Zend_Measure_Exception($e->getMessage());
         }
 
@@ -179,6 +184,7 @@ abstract class Zend_Measure_Abstract
     public function setType($type)
     {
         if (empty($this->_UNITS[$type])) {
+            require_once 'Zend/Measure/Exception.php';
             throw new Zend_Measure_Exception("Type ($type) is unknown");
         }
 
@@ -208,9 +214,9 @@ abstract class Zend_Measure_Abstract
                     }
                 }
             } else {
-                $value = $value * ($this->_UNITS[$this->getType()][0]);
+                $value = call_user_func(Zend_Locale_Math::$mul, $value, $this->_UNITS[$this->getType()][0], 25);
             }
-
+            
             // Convert to expected value
             if (is_array($this->_UNITS[$type][0])) {
                 foreach (array_reverse($this->_UNITS[$type][0]) as $key => $found) {
@@ -232,7 +238,7 @@ abstract class Zend_Measure_Abstract
                     }
                 }
             } else {
-                $value = $value / ($this->_UNITS[$type][0]);
+                $value = @call_user_func(Zend_Locale_Math::$div, $value, $this->_UNITS[$type][0], 25);
             }
 
             $this->_value = $value;

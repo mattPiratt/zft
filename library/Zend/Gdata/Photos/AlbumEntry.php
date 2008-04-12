@@ -15,7 +15,7 @@
  *
  * @category   Zend
  * @package    Zend_Gdata
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -95,7 +95,7 @@ require_once 'Zend/Gdata/App/Extension/Category.php';
  *
  * @category   Zend
  * @package    Zend_Gdata
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_Photos_AlbumEntry extends Zend_Gdata_Entry
@@ -179,7 +179,14 @@ class Zend_Gdata_Photos_AlbumEntry extends Zend_Gdata_Entry
      * @var Zend_Gdata_Media_MediaGroup
      */
     protected $_mediaGroup = null;
-    
+   
+    /**
+     * georss:where element
+     *
+     * @var Zend_Gdata_Geo_Extension_GeoRssWhere
+     */
+    protected $_geoRssWhere = null;
+ 
     /**
      * Create a new instance.
      * 

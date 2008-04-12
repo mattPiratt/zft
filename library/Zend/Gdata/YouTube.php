@@ -15,7 +15,7 @@
  *
  * @category   Zend
  * @package    Zend_Gdata
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -65,11 +65,14 @@ require_once 'Zend/Gdata/YouTube/PlaylistVideoFeed.php';
  *
  * @category   Zend
  * @package    Zend_Gdata
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_YouTube extends Zend_Gdata_Media
 {
+
+    const AUTH_SERVICE_NAME = 'youtube';
+    const CLIENTLOGIN_URL = 'https://www.google.com/youtube/accounts/ClientLogin';
 
     const STANDARD_TOP_RATED_URI = 'http://gdata.youtube.com/feeds/standardfeeds/top_rated';
     const STANDARD_MOST_VIEWED_URI = 'http://gdata.youtube.com/feeds/standardfeeds/most_viewed';
@@ -88,26 +91,29 @@ class Zend_Gdata_YouTube extends Zend_Gdata_Media
     const VIDEO_COMPLAINTS_REL = 'http://gdata.youtube.com/schemas/2007#video.complaints';
 
     const FAVORITES_URI_SUFFIX = 'favorites';
-    const UPLAODS_URI_SUFFIX = 'uploads';
+    const UPLOADS_URI_SUFFIX = 'uploads';
     const RESPONSES_URI_SUFFIX = 'responses';
     const RELATED_URI_SUFFIX = 'related';
 
-    const AUTH_SERVICE_NAME = 'videoonline';
-
     public static $namespaces = array(
-            'yt' => 'http://gdata.youtube.com/schemas/2007');
+            'yt' => 'http://gdata.youtube.com/schemas/2007',
+            'georss' => 'http://www.georss.org/georss',
+            'gml' => 'http://www.opengis.net/gml',
+            'media' => 'http://search.yahoo.com/mrss/',
+            'app' => 'http://purl.org/atom/app#');
 
     /**
      * Create Zend_Gdata_YouTube object
      *
      * @param Zend_Http_Client $client (optional) The HTTP client to use when
-     *          when communicating with the Google Apps servers.
+     *          when communicating with the Google servers.
+     * @param string $applicationId The identity of the app in the form of Company-AppName-Version
      */
-    public function __construct($client = null)
+    public function __construct($client = null, $applicationId = 'MyCompany-MyApp-1.0')
     {
         $this->registerPackage('Zend_Gdata_YouTube');
         $this->registerPackage('Zend_Gdata_YouTube_Extension');
-        parent::__construct($client);
+        parent::__construct($client, $applicationId);
     }
 
     /**
@@ -455,6 +461,67 @@ class Zend_Gdata_YouTube extends Zend_Gdata_Media
             $uri = $location;
         }
         return parent::getEntry($uri, 'Zend_Gdata_YouTube_UserProfileEntry');
+    }
+
+    /**
+     * Helper function for parsing a YouTube token response
+     * 
+     * @param string $response The service response
+     * @return array An array containing the token and URL
+     */
+    public static function parseFormUploadTokenResponse($response)
+    {
+        // Load the feed as an XML DOMDocument object
+        @ini_set('track_errors', 1);
+        $doc = new DOMDocument();
+        $success = @$doc->loadXML($response);
+        @ini_restore('track_errors');
+
+        if (!$success) {
+            require_once 'Zend/Gdata/App/Exception.php';
+            throw new Zend_Gdata_App_Exception("Zend_Gdata_YouTube::parseFormUploadTokenResponse - " .
+                                               "DOMDocument cannot parse XML: $php_errormsg");
+        }
+        $responseElement = $doc->getElementsByTagName('response')->item(0);
+
+        $urlText = null;
+        $tokenText = null;
+        if ($responseElement != null) {
+            $urlElement = $responseElement->getElementsByTagName('url')->item(0);
+            $tokenElement = $responseElement->getElementsByTagName('token')->item(0);
+
+            if ($urlElement && $urlElement->hasChildNodes() &&
+                $tokenElement && $tokenElement->hasChildNodes()) {
+
+                $urlText = $urlElement->firstChild->nodeValue;
+                $tokenText = $tokenElement->firstChild->nodeValue;
+            }
+        }
+
+        if ($tokenText != null && $urlText != null) {
+            return array('token' => $tokenText, 'url' => $urlText);
+        } else {
+            require_once 'Zend/Gdata/App/Exception.php';
+            throw new Zend_Gdata_App_Exception("form upload token not found in response");
+        }
+    }
+
+    /**
+     * Retrieves a YouTube token
+     * 
+     * @param Zend_Gdata_YouTube_VideoEntry $videoEntry The video entry
+     * @param string $url The location as a string URL
+     * @return array An array containing a token and URL
+     */
+    public function getFormUploadToken($videoEntry, $url='http://gdata.youtube.com/action/GetUploadToken')
+    {
+        if ($url != null && is_string($url)) {
+            // $response is a Zend_Http_response object
+            $response = $this->post($videoEntry, $url);
+            return self::parseFormUploadTokenResponse($response->getBody()); 
+        } else {
+            throw new Zend_Gdata_App_Exception('url must be provided as a string URL');
+        }
     }
 
 }

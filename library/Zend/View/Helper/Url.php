@@ -15,8 +15,8 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Url.php 6904 2007-11-22 18:44:10Z martel $
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @version    $Id: Url.php 8064 2008-02-16 10:58:39Z thomas $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -24,8 +24,8 @@
  * Helper for making easy links and getting urls that depend on the routes and router
  *
  * @package    Zend_View
- * @subpackage Helpers
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @subpackage Helper
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_View_Helper_Url {
@@ -62,7 +62,7 @@ class Zend_View_Helper_Url {
         
         if ($encode) {
             foreach ($urlOptions as $key => $option) {
-	        $urlOptions[$key] = urlencode($option);
+                $urlOptions[$key] = ($option !== null) ? urlencode($option) : $option;
             }
         }
 
