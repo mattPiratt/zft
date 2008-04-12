@@ -15,14 +15,15 @@
  *
  * @category   Zend
  * @package    Zend_Auth
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @subpackage Zend_Auth_Storage
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Exception.php 3412 2007-02-14 22:22:35Z darby $
+ * @version    $Id: Exception.php 8964 2008-03-21 17:53:14Z thomas $
  */
 
 
 /**
- * Zend_Auth_Exception
+ * @see Zend_Auth_Exception
  */
 require_once 'Zend/Auth/Exception.php';
 
@@ -30,7 +31,8 @@ require_once 'Zend/Auth/Exception.php';
 /**
  * @category   Zend
  * @package    Zend_Auth
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @subpackage Zend_Auth_Storage
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Auth_Storage_Exception extends Zend_Auth_Exception

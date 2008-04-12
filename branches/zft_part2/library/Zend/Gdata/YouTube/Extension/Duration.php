@@ -15,7 +15,7 @@
  *
  * @category   Zend
  * @package    Zend_Gdata
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -29,7 +29,7 @@ require_once 'Zend/Gdata/Extension.php';
  *
  * @category   Zend
  * @package    Zend_Gdata
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_YouTube_Extension_Duration extends Zend_Gdata_Extension
@@ -92,9 +92,9 @@ class Zend_Gdata_YouTube_Extension_Duration extends Zend_Gdata_Extension
     /**
      * Get the value for this element's seconds attribute.
      *
-     * @return bool The value associated with this attribute.
+     * @return int The value associated with this attribute.
      */
-    public function getState()
+    public function getSeconds()
     {
         return $this->_seconds;
     }
@@ -102,10 +102,10 @@ class Zend_Gdata_YouTube_Extension_Duration extends Zend_Gdata_Extension
     /**
      * Set the value for this element's seconds attribute.
      *
-     * @param bool $value The desired value for this attribute.
+     * @param int $value The desired value for this attribute.
      * @return Zend_Gdata_YouTube_Extension_Duration The element being modified.
      */
-    public function setState($value)
+    public function setSeconds($value)
     {
         $this->_seconds = $value;
         return $this;
@@ -114,6 +114,8 @@ class Zend_Gdata_YouTube_Extension_Duration extends Zend_Gdata_Extension
     /**
      * Magic toString method allows using this directly via echo
      * Works best in PHP >= 4.2.0
+     *
+     * @return string The duration in seconds
      */
     public function __toString() 
     {
