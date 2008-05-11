@@ -16,9 +16,9 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Flickr
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Flickr.php 4284 2007-03-30 20:54:31Z darby $
+ * @version    $Id: Flickr.php 8064 2008-02-16 10:58:39Z thomas $
  */
 
 
@@ -26,7 +26,7 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Flickr
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Flickr
@@ -87,6 +87,7 @@ class Zend_Service_Flickr
      * @param  string|array $query   A single tag or an array of tags.
      * @param  array        $options Additional parameters to refine your query.
      * @return Zend_Service_Flickr_ResultSet
+     * @throws Zend_Service_Exception
      */
     public function tagSearch($query, array $options = array())
     {
@@ -143,8 +144,8 @@ class Zend_Service_Flickr
      *
      * @param  string $query   username or email
      * @param  array  $options Additional parameters to refine your query.
-     * @throws Zend_Service_Exception
      * @return Zend_Service_Flickr_ResultSet
+     * @throws Zend_Service_Exception
      */
     public function userSearch($query, array $options = null)
     {
@@ -199,8 +200,8 @@ class Zend_Service_Flickr
      * (You can only find a user's photo with their NSID.)
      *
      * @param  string $username the username
-     * @throws Zend_Service_Exception
      * @return string the NSID (userid)
+     * @throws Zend_Service_Exception
      */
     public function getIdByUsername($username)
     {
@@ -243,8 +244,8 @@ class Zend_Service_Flickr
      * (You can only find a user's photo with their NSID.)
      *
      * @param  string $email the email
-     * @throws Zend_Service_Exception
      * @return string the NSID (userid)
+     * @throws Zend_Service_Exception
      */
     public function getIdByEmail($email)
     {
@@ -285,8 +286,8 @@ class Zend_Service_Flickr
      * Returns Flickr photo details by for the given photo ID
      *
      * @param  string $id the NSID
-     * @throws Zend_Service_Exception
      * @return array of Zend_Service_Flickr_Image, details for the specified image
+     * @throws Zend_Service_Exception
      */
     public function getImageDetails($id)
     {
@@ -347,8 +348,8 @@ class Zend_Service_Flickr
      * Validate User Search Options
      *
      * @param  array $options
-     * @throws Zend_Service_Exception
      * @return void
+     * @throws Zend_Service_Exception
      */
     protected function _validateUserSearch(array $options)
     {
@@ -401,8 +402,8 @@ class Zend_Service_Flickr
      * Validate Tag Search Options
      *
      * @param  array $options
-     * @throws Zend_Service_Exception
      * @return void
+     * @throws Zend_Service_Exception
      */
     protected function _validateTagSearch(array $options)
     {
@@ -458,8 +459,8 @@ class Zend_Service_Flickr
      * Throws an exception if and only if the response status indicates a failure
      *
      * @param  DOMDocument $dom
-     * @throws Zend_Service_Exception
      * @return void
+     * @throws Zend_Service_Exception
      */
     protected static function _checkErrors(DOMDocument $dom)
     {
@@ -498,8 +499,8 @@ class Zend_Service_Flickr
      *
      * @param  array $options      User options
      * @param  array $validOptions Valid options
-     * @throws Zend_Service_Exception
      * @return void
+     * @throws Zend_Service_Exception
      */
     protected function _compareOptions(array $options, array $validOptions)
     {

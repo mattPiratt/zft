@@ -14,23 +14,21 @@
  *
  * @category   Zend
  * @package    Zend_Layout
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: DbTable.php 4246 2007-03-27 22:35:56Z ralph $
  */
 
-/**
- * @see Zend_Exception
- */
+
+/** Zend_Exception */
 require_once 'Zend/Exception.php';
+
 
 /**
  * @category   Zend
  * @package    Zend_Layout
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Layout_Exception extends Zend_Exception
-{
-    
-}
+{}
+

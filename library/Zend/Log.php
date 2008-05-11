@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Log
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Log.php 5764 2007-07-18 21:59:22Z thomas $
+ * @version    $Id: Log.php 8064 2008-02-16 10:58:39Z thomas $
  */
 
 /** Zend_Log_Filter_Priority */
@@ -25,9 +25,9 @@ require_once 'Zend/Log/Filter/Priority.php';
 /**
  * @category   Zend
  * @package    Zend_Log
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Log.php 5764 2007-07-18 21:59:22Z thomas $
+ * @version    $Id: Log.php 8064 2008-02-16 10:58:39Z thomas $
  */
 class Zend_Log
 {
@@ -44,22 +44,22 @@ class Zend_Log
      * @var array of priorities where the keys are the
      * priority numbers and the values are the priority names
      */
-    private $_priorities = array();
+    protected $_priorities = array();
 
     /**
      * @var array of Zend_Log_Writer_Abstract
      */
-    private $_writers = array();
+    protected $_writers = array();
 
     /**
      * @var array of Zend_Log_Filter_Interface
      */
-    private $_filters = array();
+    protected $_filters = array();
 
     /**
      * @var array of extra log event
      */
-    private $_extras = array();
+    protected $_extras = array();
 
     /**
      * Class constructor.  Create a new logger
